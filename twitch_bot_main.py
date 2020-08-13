@@ -7,7 +7,6 @@ import discord.utils
 from twitch_lib import TwitchAPI
 import twitch
 
-TOKEN = 'NzM4MjAyNjYwMjI1Njc5NDAx.XyIezQ.K-a5oiZ8Pcvu90Ci77jXfuMzeTU'
 
 bot = commands.Bot(command_prefix='?')
 
@@ -18,4 +17,6 @@ async def on_ready():
     print(f'With ID: {bot.user.id}')
 
 bot.add_cog(twitch.Twitch(bot))
-bot.run(TOKEN)
+
+with open('BOT_TOKEN.txt', 'r') as f:
+    bot.run(r.read().strip())
