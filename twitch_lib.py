@@ -21,23 +21,36 @@ class TwitchAPI:
         req = requests.get(URL, headers=self.headers)
         return req.json()
     
-    def get_user_stream(self, user_name):
-        user_stream_url = 'https://api.twitch.tv/helix/streams?user_login='
+    def with_name_get_stream(self, user_name):
+        base_url = 'https://api.twitch.tv/helix/streams?user_login='
 
-        URL = user_stream_url + user_name
-
-        return self.make_request(URL)
-
-    def get_game(self, game_id):
-        game_url = 'https://api.twitch.tv/helix/games?id='
-
-        URL = game_url + game_id
+        URL = base_url + user_name
 
         return self.make_request(URL)
+    
+    def with_id_get_stream(self, game_id):
+        base_url = 'https://api.twitch.tv/helix/streams?game_id='
 
-    def get_channel(self, channel_name):
-        search_channel_url = 'https://api.twitch.tv/helix/search/channels?query='
+        URL = base_url + game_id
 
-        URL = search_channel_url + channel_name
+        return self.make_request(URL)
+    def with_id_get_game(self, game_id):
+        base_url = 'https://api.twitch.tv/helix/games?id='
+
+        URL = base_url + game_id
+
+        return self.make_request(URL)
+    
+    def with_name_get_game(self, game_name):
+        base_url = 'https://api.twitch.tv/helix/games?name='
+
+        URL = base_url + game_name
+        
+        return self.make_request(URL)
+
+    def with_name_get_channel(self, channel_name):
+        base_url = 'https://api.twitch.tv/helix/search/channels?query='
+
+        URL = base_url + channel_name
 
         return self.make_request(URL)

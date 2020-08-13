@@ -14,7 +14,7 @@ class Twitch(commands.Cog):
         self.twitch = TwitchAPI()
     
     def stream(self, user_name):
-        stream_res = self.twitch.get_user_stream(user_name)
+        stream_res = self.twitch.with_name_get_stream(user_name)
 
         streamer = [data['user_name'] for data in stream_res['data']][0]
         stream_game_id = [data['game_id'] for data in stream_res['data']][0]
@@ -31,7 +31,7 @@ class Twitch(commands.Cog):
         #entered_name = args[0]
         
 
-        channel_res = self.twitch.get_channel(entered_name)
+        channel_res = self.twitch.with_name_get_channel(entered_name)
         channel_display_names = [data['display_name'] for data in channel_res['data']]
 
         ##############################
@@ -71,7 +71,7 @@ class Twitch(commands.Cog):
                 configure_thumbnail = configure_thumbnail.replace("width", '440')
                 configure_thumbnail = configure_thumbnail.replace('height', '248')
 
-                game_res = self.twitch.get_game(stream_game_id)
+                game_res = self.twitch.with_id_get_game(stream_game_id)
 
                 game_name = [data['name'] for data in game_res['data']][0]
                 game_thumbnail = [data['box_art_url'] for data in game_res['data']][0]
