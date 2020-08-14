@@ -50,9 +50,16 @@ class TwitchAPI:
         
         return self.make_request(URL)
 
-    def with_name_get_channel(self, channel_name):
+    def with_name_search_channel(self, channel_name):
         base_url = 'https://api.twitch.tv/helix/search/channels?query='
 
         URL = base_url + channel_name
+
+        return self.make_request(URL)
+    
+    def with_name_search_category(self, game_name):
+        base_url = 'https://api.twitch.tv/helix/search/categories?query='
+
+        URL = base_url + game_name
 
         return self.make_request(URL)

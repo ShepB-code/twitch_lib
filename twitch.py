@@ -39,7 +39,7 @@ class Twitch(commands.Cog):
         #entered_name = args[0]
         
 
-        channel_res = self.twitch.with_name_get_channel(entered_name)
+        channel_res = self.twitch.with_name_search_channel(entered_name)
         channel_display_names = [data['display_name'] for data in channel_res['data']]
 
         ##############################

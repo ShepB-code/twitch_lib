@@ -3,3 +3,4 @@ CLIENT_SECRET.txt
 BOT_TOKEN.txt
 __pycache__/
 .vscode/
+twitch_test.py
