@@ -36,12 +36,7 @@ class Game(commands.Cog):
         game_id = [data['id'] for data in game_res['data']][0]
         game_name = [data['name'] for data in game_res['data']][0]
         game_thumbnail = [data['box_art_url'] for data in game_res['data']][0]
-        '''
-        configure_game_thumbnail = game_thumbnail.replace('{', '')
-        configure_game_thumbnail = configure_game_thumbnail.replace('}', '')
-        configure_game_thumbnail = configure_game_thumbnail.replace("width", '144')
-        configure_game_thumbnail = configure_game_thumbnail.replace('height', '192')
-'''
+    
         #########################################
         stream_res = self.twitch.with_id_get_stream(game_id)
 
@@ -73,8 +68,7 @@ class Game(commands.Cog):
             while loop:
                 left_emoji = '⬅'
                 right_emoji = '➡'
-                exit_emoji = '❌'
-                reaction_list = [left_emoji, right_emoji, exit_emoji]
+                reaction_list = [left_emoji, right_emoji]
 
                 for emoji in reaction_list:
                     await embed_msg.add_reaction(emoji)
@@ -90,26 +84,17 @@ class Game(commands.Cog):
                 elif str(reaction) == right_emoji:
                     current_index += 1
                 
-                elif str(reaction) == exit_emoji:
-                    loop = False
-                    inactive_embed = discord.Embed(
-                        title='INACTIVE',
-                        description='Exited by User',
-                        color=discord.Color.red()
-                    )
-                    await embed_msg.edit(embed=inactive_embed)
-                    
-                    break
                 if current_index > 4:
                     current_index = 0
                 
                 elif current_index < 0:
                     current_index = 4
+                
                 embed = discord.Embed(
                     title=f'Top 5 Streams for {game_name}',
                     color=discord.Color.purple()
                 )
-
+            
                 embed.add_field(name='Name', value=stream_user_names[current_index], inline=True)
                 embed.add_field(name='Viewer Count', value=stream_viewer_counts[current_index], inline=True)
                 embed.add_field(name='Stream', value=f'[{stream_titles[current_index]}](https://www.twitch.tv/{stream_user_names[current_index]})', inline=False)
@@ -117,15 +102,10 @@ class Game(commands.Cog):
                 embed.set_thumbnail(url=self.configure_thumbnail(game_thumbnail, 144, 192))
                 embed.set_footer(text='Made by Shep', icon_url=self.bot.get_user(shep_id).avatar_url)
 
-
                 await embed_msg.edit(embed=embed)
         except asyncio.TimeoutError:
-            inactive_embed = discord.Embed(
-                title='INACTIVE',
-                description='Timeout Error',
-                color=discord.Color.red()
-            )
-            await embed_msg.edit(embed=inactive_embed)
+            embed.color = discord.Color.dark_grey() #Grey color 
+            await embed_msg.edit(embed=embed)
 
                 
 

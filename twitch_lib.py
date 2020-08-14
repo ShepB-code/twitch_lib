@@ -10,9 +10,11 @@ class TwitchAPI:
     def get_client_secret(self):
         with open('CLIENT_SECRET.txt', 'r') as f:
             return f.read().strip()
+            
     def get_client_id(self):
         with open('CLIENT_ID.txt', 'r') as f:
             return f.read().strip()
+
     def get_access_token(self):
         access_token = requests.post(f"https://id.twitch.tv/oauth2/token?client_id={self.get_client_id()}&client_secret={self.get_client_secret()}&grant_type=client_credentials")
         return access_token.json()['access_token']

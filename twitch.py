@@ -25,6 +25,14 @@ class Twitch(commands.Cog):
 
         return stream_game_id, title, viewer_count, stream_thumbnail
 
+    def configure_thumbnail(self, thumbnail, width, height):
+        configure_thumbnail = thumbnail.replace('{', '')
+        configure_thumbnail = configure_thumbnail.replace('}', '')
+        configure_thumbnail = configure_thumbnail.replace("width", str(width))
+        configure_thumbnail = configure_thumbnail.replace('height', str(height))
+
+        return configure_thumbnail
+
     @commands.command()
     async def twitch(self, ctx, entered_name: str):
 
@@ -64,12 +72,7 @@ class Twitch(commands.Cog):
 
                 stream_viewer_count = stream_data[2]
                 stream_thumbnail = stream_data[3]
-                
-                #Removing the {width}x{height} out of the original thumbnail, and replacing those with sizes. 
-                configure_thumbnail = stream_thumbnail.replace('{', '')
-                configure_thumbnail = configure_thumbnail.replace('}', '')
-                configure_thumbnail = configure_thumbnail.replace("width", '440')
-                configure_thumbnail = configure_thumbnail.replace('height', '248')
+                        
 
                 game_res = self.twitch.with_id_get_game(stream_game_id)
 
@@ -101,7 +104,7 @@ class Twitch(commands.Cog):
                 channel_embed.add_field(name='Viewer Count', value='{:,}'.format(stream_viewer_count), inline=True)
                 channel_embed.add_field(name='Stream', value=f'[{stream_title}]({channel_url})', inline=False)
 
-                channel_embed.set_image(url=configure_thumbnail)
+                channel_embed.set_image(url=self.configure_thumbnail(stream_thumbnail, 440, 248))
                 
                 
             ##############################
