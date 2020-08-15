@@ -9,7 +9,7 @@ import time
 
 from twitch_lib import TwitchAPI
 
-class Pete(commands.Cog):
+class Game(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
