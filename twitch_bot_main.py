@@ -8,7 +8,6 @@ from twitch_lib import TwitchAPI
 import twitch
 import game
 
-
 bot = commands.Bot(command_prefix='?')
 
 @bot.event

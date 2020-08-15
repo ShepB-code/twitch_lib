@@ -36,6 +36,7 @@ class TwitchAPI:
         URL = base_url + game_id
 
         return self.make_request(URL)
+
     def with_id_get_game(self, game_id):
         base_url = 'https://api.twitch.tv/helix/games?id='
 
