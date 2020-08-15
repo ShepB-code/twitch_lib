@@ -31,7 +31,9 @@ class Twitch(commands.Cog):
         configure_thumbnail = configure_thumbnail.replace("width", str(width))
         configure_thumbnail = configure_thumbnail.replace('height', str(height))
 
-        return configure_thumbnail
+        random_url_parameter = "?=" + "".join([random.choice(string.ascii_uppercase) + str(random.randint(0, 26)) for i in range(6)])
+
+        return configure_thumbnail + random_url_parameter
 
     @commands.command()
     async def twitch(self, ctx, entered_name: str):

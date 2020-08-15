@@ -6,6 +6,8 @@ from discord.ext import commands
 import discord.utils
 import asyncio
 import time
+import random
+import string
 
 from twitch_lib import TwitchAPI
 
@@ -21,15 +23,17 @@ class Game(commands.Cog):
         configure_thumbnail = configure_thumbnail.replace("width", str(width))
         configure_thumbnail = configure_thumbnail.replace('height', str(height))
 
-        return configure_thumbnail
+        random_url_parameter = "?=" + "".join([random.choice(string.ascii_uppercase) + str(random.randint(0, 26)) for i in range(6)])
+
+        return configure_thumbnail + random_url_parameter
 
     @commands.command()
-    async def pete(self, ctx, *game: str):
+    async def game(self, ctx, *game: str):
 
-        message = ctx.message
         shep_id = 498331656822849536
 
         spaced_game  = ' '.join(game)
+        message = ctx.message
 
         #game_url_form = '%20'.join(game) #if there are mutiple entries in game
         
@@ -97,7 +101,7 @@ class Game(commands.Cog):
                 print("After embed:", time.time() - start_time)
 
                 def find_name_check(reaction, user):
-                    return user == message.author and str(reaction.emoji) in find_game_emoji_dict.keys()
+                    return user == ctx.message.author and str(reaction.emoji) in find_game_emoji_dict.keys() and reaction.message.id == find_name_msg.id
                 try:
                     reaction, user = await self.bot.wait_for('reaction_add', timeout=20.0, check=find_name_check)
                     
@@ -106,24 +110,24 @@ class Game(commands.Cog):
                     game_thumbnail = game_thumbnails_list[find_game_emoji_dict[str(reaction)]]
                 except asyncio.TimeoutError:
                     find_name_embed.color = discord.Color.dark_grey() #Grey color 
+                    find_name_embed.description = 'Inactive'
                     await find_name_msg.edit(embed=find_name_embed)
-    
-                
-                
-                
-
             
             #########################################
             stream_res = self.twitch.with_id_get_stream(game_id)
 
+            start_time = time.time()
             stream_user_names = [data['user_name'] for data in stream_res['data']]
             stream_titles = [data['title'] for data in stream_res['data']]
             stream_viewer_counts = [data['viewer_count'] for data in stream_res['data']]
             stream_thumbnails = [data['thumbnail_url'] for data in stream_res['data']]
 
+            print("After stream loops:", time.time() - start_time)
+            max_index = min(len(stream_user_names), 5) - 1
+
             #########################################
             embed = discord.Embed(
-                title=f'Top 5 Streams for {game_name}',
+                title=f'Top {max_index + 1} Streams for {game_name}',
                 color=discord.Color.purple()
             )
 
@@ -148,9 +152,11 @@ class Game(commands.Cog):
                         await embed_msg.add_reaction(emoji)
 
                     def reaction_check(reaction, user):
-                        return user == message.author and str(reaction.emoji) in reaction_list
+                        return user == message.author and str(reaction.emoji) in reaction_list and reaction.message.id == embed_msg.id
 
                     reaction, user = await self.bot.wait_for('reaction_add', timeout=20.0, check=reaction_check)
+
+                    max_index = min(len(stream_user_names), 5) - 1
 
                     if str(reaction) == left_emoji:
                         current_index -= 1
@@ -158,14 +164,14 @@ class Game(commands.Cog):
                     elif str(reaction) == right_emoji:
                         current_index += 1
                     
-                    if current_index > 4:
+                    if current_index > max_index:
                         current_index = 0
                     
                     elif current_index < 0:
                         current_index = 4
                     
                     embed = discord.Embed(
-                        title=f'Top 5 Streams for {game_name}',
+                        title=f'Top {max_index + 1} Streams for {game_name}',
                         color=discord.Color.purple()
                     )
                 
@@ -179,6 +185,7 @@ class Game(commands.Cog):
                     await embed_msg.edit(embed=embed)
             except asyncio.TimeoutError:
                 embed.color = discord.Color.dark_grey() #Grey color 
+                embed.description = 'Inactive'
                 await embed_msg.edit(embed=embed)
         except IndexError:
             await ctx.send(f'No streams were found for {game_name} ☹')
