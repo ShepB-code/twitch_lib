@@ -126,18 +126,22 @@ class Game(commands.Cog):
             max_index = min(len(stream_user_names), 5) - 1
 
             #########################################
-            embed = discord.Embed(
-                title=f'Top {max_index + 1} Streams for {game_name}',
-                color=discord.Color.purple()
-            )
+            def create_stream_embed(index=0):
+                embed = discord.Embed(
+                    title=f'Top {max_index + 1} Streams for {game_name}',
+                    color=discord.Color.purple()
+                )
 
-            embed.add_field(name='Name', value=stream_user_names[0], inline=True)
-            embed.add_field(name='Viewer Count', value=stream_viewer_counts[0], inline=True)
-            embed.add_field(name='Stream', value=f'[{stream_titles[0]}](https://www.twitch.tv/{stream_user_names[0]})', inline=False)
-            embed.set_image(url=self.configure_thumbnail(stream_thumbnails[0], 440, 248))
-            embed.set_thumbnail(url=self.configure_thumbnail(game_thumbnail, 144, 192))
-            embed.set_footer(text='Made by Shep', icon_url=self.bot.get_user(shep_id).avatar_url)
+                embed.add_field(name='Name', value=stream_user_names[index], inline=True)
+                embed.add_field(name='Rank', value=index + 1, inline=True)
+                embed.add_field(name='Viewer Count', value=stream_viewer_counts[index], inline=True)
+                embed.add_field(name='Stream', value=f'[{stream_titles[index]}](https://www.twitch.tv/{stream_user_names[index]})', inline=False)
+                embed.set_image(url=self.configure_thumbnail(stream_thumbnails[index], 440, 248))
+                embed.set_thumbnail(url=self.configure_thumbnail(game_thumbnail, 144, 192))
+                embed.set_footer(text='Made by Shep', icon_url=self.bot.get_user(shep_id).avatar_url)
+                return embed
 
+            embed = create_stream_embed()
             embed_msg = await ctx.send(embed=embed)
 
             try:
@@ -170,17 +174,7 @@ class Game(commands.Cog):
                     elif current_index < 0:
                         current_index = 4
                     
-                    embed = discord.Embed(
-                        title=f'Top {max_index + 1} Streams for {game_name}',
-                        color=discord.Color.purple()
-                    )
-                
-                    embed.add_field(name='Name', value=stream_user_names[current_index], inline=True)
-                    embed.add_field(name='Viewer Count', value=stream_viewer_counts[current_index], inline=True)
-                    embed.add_field(name='Stream', value=f'[{stream_titles[current_index]}](https://www.twitch.tv/{stream_user_names[current_index]})', inline=False)
-                    embed.set_image(url=self.configure_thumbnail(stream_thumbnails[current_index], 440, 248))
-                    embed.set_thumbnail(url=self.configure_thumbnail(game_thumbnail, 144, 192))
-                    embed.set_footer(text='Made by Shep', icon_url=self.bot.get_user(shep_id).avatar_url)
+                    embed = create_stream_embed(index=current_index)
 
                     await embed_msg.edit(embed=embed)
             except asyncio.TimeoutError:
@@ -188,17 +182,7 @@ class Game(commands.Cog):
                 embed.description = 'Inactive'
                 await embed_msg.edit(embed=embed)
         except IndexError:
-            await ctx.send(f'No streams were found for {game_name} ☹')
-                  
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+            try:
+                await ctx.send(f'No streams were found for {game_name} ☹')
+            except UnboundLocalError:
+                await ctx.send(f'No streams were found for {spaced_game} ☹')
